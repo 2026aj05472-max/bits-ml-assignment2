@@ -1,6 +1,6 @@
 # End-to-End Machine Learning Classification & Streamlit Deployment
 **BITS Pilani - Work Integrated Learning Programmes Division**  
-**Course:** M.Tech (AIML) - Machine Learning | **Assignment - 2**
+**Course:** M.Tech (AIML) - Machine Learning | **Assignment - 2**  
 **BITSID:2026aj05472   NAME:MODIBOYANA MAHIDHAR**
 
 ---
