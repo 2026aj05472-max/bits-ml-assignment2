@@ -42,9 +42,28 @@ st.sidebar.info("**Dataset Requirements:**\n- Features: 30 numerical measurement
 def load_model(path):
     return joblib.load(path)
 
+# --- Automatic Data Source Selection ---
+default_csv_path = "test_data.csv"
+df_test = None
+
 if uploaded_file is not None:
     try:
         df_test = pd.read_csv(uploaded_file)
+        st.sidebar.success("Using uploaded CSV file.")
+    except Exception as e:
+        st.error(f"Error reading uploaded file: {e}")
+elif os.path.exists(default_csv_path):
+    try:
+        df_test = pd.read_csv(default_csv_path)
+        st.sidebar.info("Using default repository dataset (`test_data.csv`).")
+    except Exception as e:
+        st.error(f"Error reading repository dataset: {e}")
+else:
+    st.info("👈 Upload test_data.csv from the sidebar to evaluate the model.")
+
+# --- Evaluation Dashboard Execution ---
+if df_test is not None:
+    try:
         st.subheader("1. Test Dataset Preview")
         c1, c2 = st.columns([3, 1])
         c1.dataframe(df_test.head(5), use_container_width=True)
@@ -52,7 +71,7 @@ if uploaded_file is not None:
         c2.metric("Total Columns", df_test.shape[1])
         
         if 'target' not in df_test.columns:
-            st.error("Error: The uploaded CSV must contain a 'target' column.")
+            st.error("Error: The CSV dataset must contain a 'target' column.")
         else:
             X_eval = df_test.drop(columns=['target'])
             y_eval = df_test['target']
@@ -104,6 +123,4 @@ if uploaded_file is not None:
                     cr_dict = classification_report(y_eval, y_pred, target_names=['Malignant (0)', 'Benign (1)'], output_dict=True)
                     st.dataframe(pd.DataFrame(cr_dict).transpose().style.format(precision=4), use_container_width=True)
     except Exception as e:
-        st.error(f"Error processing test file: {e}")
-else:
-    st.info("👈 Upload test_data.csv from the sidebar to evaluate the model.")
+        st.error(f"Error evaluating model on test data: {e}")
